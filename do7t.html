@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prediksi Spaceman 7 Pola</title>
+  <style>
+    body {
+      background-color: #000014;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 { color: #00c3ff; }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+    }
+    input {
+      width: 120px;
+    }
+    button {
+      background-color: #007acc;
+      color: white;
+    }
+    #polaBox, #hasil {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #1a1a2f;
+      border-radius: 10px;
+    }
+    #prediksi {
+      font-size: 24px;
+      color: #00ff99;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Bot Prediksi Spaceman (7 Pola)</h1>
+
+  <p>Masukkan 7 multiplier terakhir:</p>
+  <input type="number" id="inputPola" step="0.01" placeholder="Contoh: 3.50">
+  <br>
+  <button onclick="tambahPola()">➕ Tambah</button>
+  <button onclick="resetPola()">🔁 Reset</button>
+
+  <div id="polaBox">Belum ada data</div>
+  <div id="hasil">Prediksi akan muncul di sini...</div>
+
+  <script>
+    let pola = [];
+
+    function tambahPola() {
+      const input = parseFloat(document.getElementById("inputPola").value);
+      if (isNaN(input)) return alert("Masukkan angka multiplier!");
+
+      pola.push(input);
+      if (pola.length > 7) pola.shift(); // hanya simpan 7 terakhir
+
+      document.getElementById("inputPola").value = "";
+      tampilkanPola();
+      prediksiRNG();
+    }
+
+    function resetPola() {
+      pola = [];
+      document.getElementById("polaBox").innerHTML = "Belum ada data";
+      document.getElementById("hasil").innerHTML = "Prediksi akan muncul di sini...";
+    }
+
+    function tampilkanPola() {
+      document.getElementById("polaBox").innerHTML =
+        "Pola Saat Ini: " + pola.map(p => p.toFixed(2)).join(" | ");
+    }
+
+    function prediksiRNG() {
+      const hasil = document.getElementById("hasil");
+
+      if (pola.length < 7) {
+        hasil.innerHTML = "⏳ Masukkan " + (7 - pola.length) + " data lagi...";
+        return;
+      }
+
+      const rata2 = pola.reduce((a, b) => a + b, 0) / pola.length;
+      let trend = 0;
+      for (let i = 1; i < pola.length; i++) {
+        if (pola[i] > pola[i - 1]) trend++;
+        else if (pola[i] < pola[i - 1]) trend--;
+      }
+
+      // RNG dengan bias dari tren dan rata-rata
+      let rng = Math.random(); // 0 - 1
+      let prediksi = 1.00 + rng * 100; // awal acak dari 1.00 sampai 100.00
+
+      prediksi += (rata2 - 5) * 0.5;
+      prediksi += trend * 0.5;
+
+      prediksi = Math.max(1.00, Math.min(100.00, prediksi)); // Batas atas & bawah
+
+      let status = "Prediksi Selanjutnya: ";
+      if (prediksi < 2) status += "⚠️ Crash Cepat";
+      else if (prediksi < 10) status += "🟡 Waspada";
+      else if (prediksi <= 30) status += "🟢 Potensi Stabil";
+      else status += "🚀 Potensi Tinggi!";
+
+      hasil.innerHTML = `
+        <div id="prediksi">🎰 ${prediksi.toFixed(2)}x</div>
+        <div>${status}</div>
+      `;
+    }
+  </script>
+</body>
+</html>
